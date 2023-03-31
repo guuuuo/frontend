@@ -36,7 +36,7 @@ import type { Ref } from 'vue';
 import { NButton, NPopconfirm, NSpace, NTag } from 'naive-ui';
 import type { DataTableColumns, PaginationProps } from 'naive-ui';
 import { genderLabels, userStatusLabels } from '@/constants';
-import { fetchUserList } from '@/service';
+import { fetchUserList, deleteUserById } from '@/service';
 import { useBoolean, useLoading } from '@/hooks';
 import TableActionModal from './components/table-action-modal.vue';
 import type { ModalType } from './components/table-action-modal.vue';
@@ -174,8 +174,11 @@ function handleEditTable(rowId: string) {
   openModal();
 }
 
-function handleDeleteTable(rowId: string) {
-  window.$message?.info(`点击了删除，rowId为${rowId}`);
+async function handleDeleteTable(rowId: string) {
+  const response = await deleteUserById(rowId);
+  if (response) {
+    window.$message?.info('删除成功！');
+  }
 }
 
 const pagination: PaginationProps = reactive({

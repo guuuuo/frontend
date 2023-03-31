@@ -35,6 +35,7 @@
 import { ref, computed, reactive, watch } from 'vue';
 import type { FormInst, FormItemRule } from 'naive-ui';
 import { genderOptions, userStatusOptions } from '@/constants';
+import { saveUser } from '@/service';
 import { formRules, createRequiredFormRule } from '@/utils';
 
 export interface Props {
@@ -85,6 +86,14 @@ const title = computed(() => {
   return titles[props.type];
 });
 
+const successMessage = computed(() => {
+  const messages: Record<ModalType, string> = {
+    add: '新增成功！',
+    edit: '更新成功！'
+  };
+  return messages[props.type];
+});
+
 const formRef = ref<HTMLElement & FormInst>();
 
 type FormModel = Pick<UserManagement.User, 'userName' | 'age' | 'gender' | 'phone' | 'email' | 'userStatus'>;
@@ -133,8 +142,12 @@ function handleUpdateFormModelByModalType() {
 
 async function handleSubmit() {
   await formRef.value?.validate();
-  window.$message?.success('新增成功!');
-  closeModal();
+  const user = {} as UserManagement.User;
+  const { data } = await saveUser(Object.assign(user, formModel));
+  if (data) {
+    window.$message?.success(`${successMessage.value}`);
+    closeModal();
+  }
 }
 
 watch(

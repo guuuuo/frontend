@@ -1,0 +1,3 @@
+@Library('shared-libs') _
+
+nodeBuild('guuuuo', 'frontend')
